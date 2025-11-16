@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕷️ Scrapient Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">
+            <span class="logo">🕷️</span>
+            Scrapient Dashboard
+        </h1>
+    </header>
+
+    <main class="main">
+        <section class="documents-section">
+            <div class="section-header">
+                <h2>📊 Scraped Documents</h2>
+                <div class="document-count" id="document-count">0 documents</div>
+            </div>
+
+            <div class="bulk-actions">
+                <button id="select-all-btn" class="secondary-button">☑️ Select All</button>
+                <button id="delete-selected-btn" class="delete-button" disabled>🗑️ Delete Selected</button>
+                <button id="refresh-btn" class="secondary-button">🔄 Refresh</button>
+            </div>
+
+            <div id="documents-list" class="documents-list">
+                <div class="loading">Loading documents...</div>
+            </div>
+
+            <div class="pagination" id="pagination" style="display: none;">
+                <button id="prev-btn" class="secondary-button" disabled>← Previous</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-btn" class="secondary-button">Next →</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Document Viewer Modal -->
+    <div id="document-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Document Details</h3>
+                <button id="modal-close" class="close-button">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="tab-button active" data-tab="preview">📖 Preview</button>
+                    <button class="tab-button" data-tab="data">🗃️ Data</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="preview-tab" class="tab-panel active">
+                        <iframe id="preview-iframe" sandbox="allow-same-origin"></iframe>
+                    </div>
+
+                    <div id="data-tab" class="tab-panel">
+                        <pre id="data-content"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
