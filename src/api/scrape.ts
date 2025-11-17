@@ -1,6 +1,7 @@
 import type { Storage } from '../storage/types';
 import type { ExtractedContent } from '../../extensions/shared/types';
 import { z } from 'zod';
+import { createDoclingProcessor } from '../utils/doclingProcessor';
 
 const ExtractedContentSchema = z.object({
   url: z.string().url(),
@@ -76,5 +77,102 @@ export const createScrapeHandlers = (storage: Storage) => {
     }
   };
 
-  return { handleScrape };
+  const handlePDFScrape = async (req: Request): Promise<Response> => {
+    return handleDoclingPDFScrape(req);
+  };
+
+  const handleDoclingPDFScrape = async (req: Request): Promise<Response> => {
+    try {
+      const body = await req.json();
+      const {
+        url,
+        output_format = 'md',
+        timeout = 120000
+      } = body;
+
+      if (!url || typeof url !== 'string') {
+        throw new Error('URL is required and must be a string');
+      }
+
+      if (!url.toLowerCase().endsWith('.pdf')) {
+        throw new Error('URL must point to a PDF file');
+      }
+
+      // Create Docling processor with configuration
+      const doclingProcessor = createDoclingProcessor({
+        outputFormat: output_format,
+        timeout: timeout,
+        tempDir: '/tmp',
+      });
+
+      const result = await doclingProcessor.processPDFFromURL(url);
+      const parsedUrl = new URL(url);
+
+      const document = {
+        url: url,
+        domain: parsedUrl.hostname,
+        title: result.metadata.title || parsedUrl.pathname.split('/').pop()?.replace(/\.pdf$/i, '') || 'PDF Document',
+        scrapedAt: new Date(),
+        contentType: 'pdf' as const,
+        content: {
+          text: result.text,
+          markdown: result.markdown,
+          ...(result.json && { structure: result.json }),
+          metadata: {
+            processingMethod: 'docling',
+            totalPages: result.metadata.pages,
+            processingTime: result.metadata.processingTime,
+            originalName: result.metadata.originalName,
+          },
+        }
+      };
+
+      const id = await storage.save(document);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          id,
+          document: {
+            text: result.text,
+            markdown: result.markdown,
+            ...(result.json && { json: result.json }),
+          },
+          processing: {
+            method: 'docling',
+            totalTime: result.metadata.processingTime,
+            pagesProcessed: result.metadata.pages,
+            format: output_format,
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type'
+          }
+        }
+      );
+
+    } catch (error) {
+      console.error('Docling PDF scrape error:', error);
+
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process PDF with Docling';
+
+      return new Response(
+        JSON.stringify({ success: false, error: errorMessage }),
+        {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        }
+      );
+    }
+  };
+
+  return { handleScrape, handlePDFScrape, handleDoclingPDFScrape };
 };

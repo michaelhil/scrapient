@@ -13,6 +13,10 @@ export interface ExtractedContent {
   contentType: 'webpage';
 }
 
+export interface PDFScrapeRequest {
+  url: string;
+}
+
 export interface ScrapeResponse {
   success: boolean;
   id?: string;

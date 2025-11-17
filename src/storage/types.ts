@@ -13,6 +13,7 @@ export interface ScrapedDocument {
     metadata: Record<string, any>;
     images?: string[];
     fileData?: Buffer;
+    structure?: any; // JSON document structure for hybrid processing
   };
   tags?: string[];
   processed?: boolean;

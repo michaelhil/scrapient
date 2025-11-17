@@ -1,4 +1,4 @@
-import type { ExtractedContent, NotificationOptions } from './types';
+import type { ExtractedContent, NotificationOptions, PDFScrapeRequest } from './types';
 import { htmlToMarkdown } from './htmlToMarkdown';
 
 const extractPageContent = (): ExtractedContent => {
@@ -113,8 +113,63 @@ const showNotification = (options: NotificationOptions): void => {
   notification.style.cursor = 'pointer';
 };
 
+const isPDFPage = (): boolean => {
+  return window.location.href.toLowerCase().endsWith('.pdf') ||
+         document.contentType === 'application/pdf' ||
+         document.querySelector('embed[type="application/pdf"]') !== null ||
+         document.querySelector('object[type="application/pdf"]') !== null;
+};
+
+const triggerPDFScrape = async (url: string): Promise<void> => {
+  try {
+    showNotification({ message: 'Scraping PDF...', type: 'info' });
+
+    const serverUrl = 'http://localhost:3000';
+    const pdfRequest: PDFScrapeRequest = { url };
+
+    const response = await fetch(`${serverUrl}/api/scrape/pdf`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(pdfRequest),
+      mode: 'cors'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
+      throw new Error(errorData.error || `Server responded with ${response.status}`);
+    }
+
+    const result = await response.json();
+    showNotification({
+      message: `✅ PDF scraped successfully! ID: ${result.id}`,
+      type: 'success'
+    });
+
+  } catch (error) {
+    console.error('PDF scrape failed:', error);
+
+    let errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    if (errorMessage.includes('Failed to fetch')) {
+      errorMessage = 'Connection failed. Check if Scrapient server is running on http://localhost:3000';
+    }
+
+    showNotification({
+      message: `❌ Error: ${errorMessage}`,
+      type: 'error'
+    });
+  }
+};
+
 const triggerScrape = async (): Promise<void> => {
   try {
+    // Check if this is a PDF page
+    if (isPDFPage()) {
+      await triggerPDFScrape(window.location.href);
+      return;
+    }
+
     showNotification({ message: 'Scraping page...', type: 'info' });
 
     const content = extractPageContent();
@@ -145,7 +200,7 @@ const triggerScrape = async (): Promise<void> => {
 
     let errorMessage = error instanceof Error ? error.message : 'Unknown error';
     if (errorMessage.includes('Failed to fetch')) {
-      errorMessage = 'Connection failed. Check if Scrapient server is running on http://localhost:3001';
+      errorMessage = 'Connection failed. Check if Scrapient server is running on http://localhost:3000';
     }
 
     showNotification({

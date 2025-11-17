@@ -15,6 +15,42 @@
     </header>
 
     <main class="main">
+        <!-- PDF Upload Area -->
+        <div id="upload-area" class="upload-area">
+            <div class="upload-zone" id="upload-zone">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p class="upload-text">Drop PDF, JSON, or MD files here or click to browse</p>
+                <p class="upload-hint">Maximum file size: 50MB • Supported: PDF, JSON, Markdown</p>
+                <input type="file" id="file-input" accept=".pdf,.json,.md,.markdown,application/pdf,application/json,text/markdown" multiple hidden>
+            </div>
+            <div id="upload-progress" class="upload-progress hidden">
+                <div class="upload-progress-header">
+                    <p class="upload-progress-title" id="upload-progress-title">Processing Documents</p>
+                    <p class="upload-progress-subtitle" id="upload-progress-subtitle">Preparing files...</p>
+                </div>
+
+                <div class="upload-progress-files" id="upload-progress-files">
+                    <!-- File progress items will be added here dynamically -->
+                </div>
+
+                <div class="upload-progress-overall">
+                    <div class="upload-progress-bar">
+                        <div class="upload-progress-fill" id="upload-progress-fill"></div>
+                    </div>
+                    <p class="upload-progress-text" id="upload-progress-text">Overall Progress: 0%</p>
+                </div>
+
+                <div class="upload-progress-details" id="upload-progress-details">
+                    <p class="upload-activity" id="upload-activity">🔄 Initializing...</p>
+                    <p class="upload-pages" id="upload-pages"></p>
+                </div>
+            </div>
+        </div>
+
         <section class="documents-section">
             <div class="section-header">
                 <h2>📊 Scraped Documents</h2>
@@ -25,6 +61,7 @@
                 <button id="select-all-btn" class="secondary-button">☑️ Select All</button>
                 <button id="delete-selected-btn" class="delete-button" disabled>🗑️ Delete Selected</button>
                 <button id="refresh-btn" class="secondary-button">🔄 Refresh</button>
+                <button id="paste-content-btn" class="secondary-button">📝 Paste Content</button>
             </div>
 
             <div id="documents-list" class="documents-list">
@@ -60,6 +97,43 @@
 
                     <div id="data-tab" class="tab-panel">
                         <pre id="data-content"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paste Content Modal -->
+    <div id="paste-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 Paste Content</h3>
+                <button id="paste-modal-close" class="close-button">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="paste-form">
+                    <div class="form-group">
+                        <label for="content-title">Title (optional)</label>
+                        <input type="text" id="content-title" placeholder="Leave empty to auto-generate from content">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content-type">Content Type</label>
+                        <select id="content-type">
+                            <option value="md">Markdown (.md)</option>
+                            <option value="json">JSON (.json)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content-text">Content</label>
+                        <textarea id="content-text" rows="15" placeholder="Paste your JSON or Markdown content here..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="paste-submit-btn" class="primary-button">💾 Save Content</button>
+                        <button id="paste-cancel-btn" class="secondary-button">Cancel</button>
                     </div>
                 </div>
             </div>

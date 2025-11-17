@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (tab) {
         urlElement.textContent = tab.url || 'Unknown URL';
         titleElement.textContent = tab.title || 'Untitled Page';
+
+        // Update scrape button text based on page type
+        if (tab.url && tab.url.toLowerCase().endsWith('.pdf')) {
+          scrapeButton.textContent = 'Scrape PDF';
+        } else {
+          scrapeButton.textContent = 'Scrape Page';
+        }
       }
     } catch (error) {
       console.error('Error getting tab info:', error);

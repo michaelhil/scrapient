@@ -1,88 +1,78 @@
 # 🕷️ Scrapient
 
-Simplified extension-first web scraping tool built with TypeScript and Bun.
+TypeScript-first web scraping and document processing tool with browser extension and PDF processing capabilities.
 
 ## Features
 
-- **Chrome Extension**: One-click scraping with popup interface
-- **Keyboard Shortcuts**: Ctrl+Shift+S (Cmd+Shift+S on Mac)
-- **Dashboard**: Clean web interface for managing scraped content
-- **Bulk Operations**: Select and delete multiple documents
-- **Content Viewer**: Preview HTML, view text, and inspect metadata
-- **TypeScript First**: Type-safe codebase with factory functions
-- **MongoDB Storage**: Reliable document storage
+- **Multi-Format Processing**: Web pages, PDFs, JSON, Markdown
+- **Docling PDF Engine**: Advanced PDF processing with structured output
+- **Chrome Extension**: One-click web scraping
+- **File Upload**: Direct file upload and paste content support
+- **Modular Dashboard**: Clean web interface for document management
+- **TypeScript Architecture**: Fully typed codebase with functional patterns
 
 ## Quick Start
 
-1. **Setup**:
-   ```bash
-   cd scrapient
-   bun install
-   bun run setup
-   ```
+```bash
+# Setup
+bun install
+bun run setup
 
-2. **Start Development**:
-   ```bash
-   bun run dev
-   ```
+# Start server
+bun run dev
 
-3. **Load Chrome Extension**:
-   - Open Chrome → `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select `extensions/chrome/build/` folder
+# Load Chrome extension
+# → chrome://extensions/ → Load unpacked → extensions/chrome/build/
 
-4. **Start Scraping**:
-   - Visit any webpage
-   - Press `Ctrl+Shift+S` or click the extension icon
-   - View results at `http://localhost:3001`
+# Access dashboard: http://localhost:3000
+```
 
 ## Architecture
 
 ```
-extensions/          # Browser extensions
-├── shared/         # TypeScript source code
-├── chrome/         # Chrome-specific files
-└── scripts/        # Build scripts
+src/
+├── core/router/        # Modular request routing
+├── api/
+│   ├── handlers/       # Request handlers (upload, files)
+│   ├── validators/     # Input validation
+│   ├── scrape.ts      # Web & PDF scraping
+│   └── documents.ts   # Document management
+├── storage/           # MongoDB integration
+└── utils/            # Docling PDF processor
 
-src/                # Backend server
-├── api/           # API route handlers
-├── storage/       # MongoDB integration
-└── server.ts      # Main server
+dashboard/
+├── components/        # UI components (upload, documents, modals)
+├── core/             # State management & utilities
+├── styles/           # Modular CSS
+└── app.ts           # Main orchestrator (33 lines)
 
-dashboard/          # Web dashboard
-├── app.ts         # Dashboard logic
-├── styles/        # CSS styles
-└── index.html     # Main page
+extensions/
+├── shared/           # Common TypeScript code
+├── chrome/          # Chrome extension
+└── scripts/         # Build automation
 ```
 
 ## API Endpoints
 
-- `POST /api/scrape` - Submit scraped content
-- `GET /api/documents` - List all documents
-- `GET /api/documents/:id` - Get specific document
-- `DELETE /api/documents/:id` - Delete single document
-- `DELETE /api/documents` - Bulk delete (with `ids` array)
+### Web Scraping
+- `POST /api/scrape` - Web page scraping
+- `POST /api/scrape/pdf` - PDF processing (Docling)
 
-## Development
+### File Upload
+- `POST /api/upload` - File upload (PDF/JSON/Markdown)
+- `POST /api/paste-content` - Paste content directly
 
-- **Extension**: `bun run build:extensions`
-- **Watch Mode**: `bun run watch:extensions`
-- **Server**: `bun run dev`
-- **Database**: `bun run docker:up`
+### Document Management
+- `GET /api/documents` - List documents
+- `GET /api/documents/:id` - Get document
+- `DELETE /api/documents/:id` - Delete document
+- `GET /api/documents/:id/download` - Download PDF
 
-## Future Features
+## Technology Stack
 
-- Firefox extension support
-- PDF and Excel file processing
-- AI-powered content cleaning
-- Advanced filtering and tagging
-- Real-time WebSocket updates
-
-## Tech Stack
-
-- **Runtime**: Bun
-- **Language**: TypeScript
+- **Runtime**: Bun (primary), Node.js compatible
+- **Language**: TypeScript (100% - no JavaScript files)
 - **Database**: MongoDB
-- **Frontend**: Vanilla TS (no framework)
-- **Architecture**: Factory functions, no classes
+- **PDF Processing**: Docling (IBM Research)
+- **Architecture**: Functional programming, factory patterns
+- **Frontend**: Vanilla TypeScript, no frameworks
