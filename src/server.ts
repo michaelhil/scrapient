@@ -3,6 +3,7 @@ import { createMongoStorage } from './storage/mongodb';
 import { createScrapeHandlers } from './api/scrape';
 import { createDocumentHandlers } from './api/documents';
 import { createUploadHandlers } from './api/upload';
+import { createLLMHandlers } from './api/llm';
 import { createAppRouter } from './core/router';
 
 export const createServer = async (): Promise<Server> => {
@@ -12,11 +13,13 @@ export const createServer = async (): Promise<Server> => {
   const scrapeHandlers = createScrapeHandlers(storage);
   const documentHandlers = createDocumentHandlers(storage);
   const uploadHandlers = createUploadHandlers(storage);
+  const llmHandlers = createLLMHandlers(storage);
 
   const router = createAppRouter({
     scrapeHandlers,
     documentHandlers,
     uploadHandlers,
+    llmHandlers,
     storage
   });
 

@@ -5,7 +5,7 @@ export interface ScrapedDocument {
   domain: string;
   title: string;
   scrapedAt: Date;
-  contentType: 'webpage' | 'pdf' | 'excel' | 'image';
+  contentType: 'webpage' | 'pdf' | 'excel' | 'image' | 'json' | 'markdown' | 'text';
   content: {
     html?: string;
     text: string;
@@ -13,7 +13,7 @@ export interface ScrapedDocument {
     metadata: Record<string, any>;
     images?: string[];
     fileData?: Buffer;
-    structure?: any; // JSON document structure for hybrid processing
+    structure?: any; // JSON document structure
   };
   tags?: string[];
   processed?: boolean;

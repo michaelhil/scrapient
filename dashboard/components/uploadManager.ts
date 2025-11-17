@@ -93,7 +93,7 @@ const processFiles = async (files: FileList): Promise<void> => {
       const progressTimer = simulateProgressUpdates(file.name);
 
       // Upload the file
-      const result = await uploadFiles(new FileList([file] as any));
+      const result = await uploadFiles([file]);
 
       clearInterval(progressTimer);
 

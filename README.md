@@ -5,6 +5,7 @@ TypeScript-first web scraping and document processing tool with browser extensio
 ## Features
 
 - **Multi-Format Processing**: Web pages, PDFs, JSON, Markdown
+- **Local LLM Integration**: Document analysis, entity extraction, knowledge graphs
 - **Docling PDF Engine**: Advanced PDF processing with structured output
 - **Chrome Extension**: One-click web scraping
 - **File Upload**: Direct file upload and paste content support
@@ -67,6 +68,13 @@ extensions/
 - `GET /api/documents/:id` - Get document
 - `DELETE /api/documents/:id` - Delete document
 - `GET /api/documents/:id/download` - Download PDF
+
+### LLM Analysis
+- `POST /api/llm/analyze` - Analyze single document
+- `POST /api/llm/process` - Process multiple documents
+- `POST /api/llm/query` - Query document collection
+- `POST /api/llm/knowledge-graph` - Generate knowledge graph
+- `GET /api/llm/status` - LLM service status
 
 ## Technology Stack
 

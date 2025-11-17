@@ -15,6 +15,8 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "setup": "bun scripts/setup.ts",
+    "llm:download": "bun scripts/download-model.ts",
+    "llm:test": "bun scripts/test-llm.ts",
     "test": "echo 'No tests yet' && exit 0"
   },
   "keywords": ["web-scraping", "browser-extension", "content-extraction", "typescript"],
@@ -27,6 +29,7 @@
   },
   "dependencies": {
     "mongodb": "^7.0.0",
+    "node-llama-cpp": "^3.14.2",
     "zod": "^3.23.8"
   }
 }

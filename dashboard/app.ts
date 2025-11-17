@@ -2,6 +2,7 @@ import { initializeUploadManager } from './components/uploadManager';
 import { initializeDocumentList, loadDocuments } from './components/documentList';
 import { initializeDocumentModal, closeDocumentModal } from './components/documentModal';
 import { initializePasteModal } from './components/pasteModal';
+import { initializeAnalysisModal, hideAnalysisModal } from './components/analysisModal';
 
 const initializeEventListeners = (): void => {
   // Initialize all component event listeners
@@ -9,13 +10,18 @@ const initializeEventListeners = (): void => {
   initializeDocumentList();
   initializeDocumentModal();
   initializePasteModal();
+  initializeAnalysisModal();
 
   // Global keyboard shortcuts
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      // Close paste modal first (if open), then document modal
+      // Close analysis modal first, then paste modal, then document modal
+      const analysisModalElement = document.getElementById('analysis-modal');
       const pasteModalElement = document.getElementById('paste-modal');
-      if (pasteModalElement && pasteModalElement.style.display !== 'none') {
+
+      if (analysisModalElement && analysisModalElement.style.display !== 'none') {
+        hideAnalysisModal();
+      } else if (pasteModalElement && pasteModalElement.style.display !== 'none') {
         const { closePasteModal } = require('./components/pasteModal');
         closePasteModal();
       } else {

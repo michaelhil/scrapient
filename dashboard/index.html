@@ -60,6 +60,7 @@
             <div class="bulk-actions">
                 <button id="select-all-btn" class="secondary-button">☑️ Select All</button>
                 <button id="delete-selected-btn" class="delete-button" disabled>🗑️ Delete Selected</button>
+                <button id="analyze-selected-btn" class="primary-button" disabled>🧠 Analyze</button>
                 <button id="refresh-btn" class="secondary-button">🔄 Refresh</button>
                 <button id="paste-content-btn" class="secondary-button">📝 Paste Content</button>
             </div>
@@ -134,6 +135,70 @@
                     <div class="form-actions">
                         <button id="paste-submit-btn" class="primary-button">💾 Save Content</button>
                         <button id="paste-cancel-btn" class="secondary-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LLM Analysis Modal -->
+    <div id="analysis-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🧠 Analyze Documents</h3>
+                <button id="analysis-modal-close" class="close-button">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="analysis-form">
+                    <div class="form-group">
+                        <label for="analysis-selected-count">Selected Documents</label>
+                        <div id="analysis-selected-count" class="selected-count">0 documents selected</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analysis-prompt">Analysis Prompt</label>
+                        <textarea id="analysis-prompt" rows="8" placeholder="Enter your analysis prompt here...
+
+Examples:
+- Summarize the main themes across these documents
+- Extract key entities and relationships
+- Identify common patterns or insights
+- Generate a comparative analysis"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="toggle-container">
+                            <input type="checkbox" id="store-as-document" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">Store output as document</span>
+                        </label>
+                        <div class="toggle-description">
+                            When enabled, analysis results will be saved as a new document.
+                            When disabled, results will be shown on screen only.
+                        </div>
+                    </div>
+
+                    <div id="analysis-progress" class="analysis-progress hidden">
+                        <div class="progress-header">
+                            <span class="progress-title">Analyzing documents...</span>
+                            <span class="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="analysis-progress-fill"></div>
+                        </div>
+                        <div class="progress-status" id="analysis-progress-status">Initializing...</div>
+                    </div>
+
+                    <div id="analysis-results" class="analysis-results hidden">
+                        <h4>📊 Analysis Results</h4>
+                        <div class="results-content" id="analysis-results-content"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="analysis-submit-btn" class="primary-button">🧠 Start Analysis</button>
+                        <button id="analysis-cancel-btn" class="secondary-button">Cancel</button>
+                        <button id="analysis-close-btn" class="secondary-button hidden">Close</button>
                     </div>
                 </div>
             </div>

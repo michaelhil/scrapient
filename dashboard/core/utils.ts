@@ -50,6 +50,8 @@ export const getDocumentIcon = (contentType: string): string => {
     case 'pdf': return '📄';
     case 'json': return '🗂️';
     case 'markdown': return '📝';
+    case 'text': return '🧠';
+    case 'web': return '🌐';
     default: return '📄';
   }
 };

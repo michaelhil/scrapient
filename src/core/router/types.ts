@@ -16,6 +16,13 @@ export interface AppHandlers {
     handleUpload: (req: Request) => Promise<Response>;
     handlePasteContent: (req: Request) => Promise<Response>;
   };
+  llmHandlers: {
+    handleAnalyze: (req: Request) => Promise<Response>;
+    handleProcess: (req: Request) => Promise<Response>;
+    handleQuery: (req: Request) => Promise<Response>;
+    handleKnowledgeGraph: (req: Request) => Promise<Response>;
+    handleStatus: (req: Request) => Promise<Response>;
+  };
   storage: Storage;
 }
 

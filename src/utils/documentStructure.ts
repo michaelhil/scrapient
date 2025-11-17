@@ -29,7 +29,7 @@ export const LayoutInfoSchema = z.object({
 });
 
 export const ProcessingMetadataSchema = z.object({
-  processingMethod: z.enum(['hybrid', 'text-only', 'vision-heavy']),
+  processingMethod: z.enum(['docling', 'text-only']),
   llmModel: z.string().optional(),
   tokensUsed: z.number().optional(),
   processingTime: z.number(),
@@ -55,7 +55,7 @@ export const DocumentStructureSchema = z.object({
     totalWords: z.number(),
     totalCharacters: z.number(),
     averageConfidence: z.number().min(0).max(1),
-    processingMethod: z.enum(['hybrid', 'text-only', 'vision-heavy']),
+    processingMethod: z.enum(['docling', 'text-only']),
   }),
   pages: z.array(PageStructureSchema),
   combined: z.object({
@@ -235,8 +235,8 @@ export const createDocumentStructureBuilder = () => {
     const averageConfidence = pages.reduce((sum, page) => sum + page.metadata.confidence, 0) / pages.length;
 
     // Determine overall processing method
-    const hybridPages = pages.filter(p => p.metadata.processingMethod === 'hybrid').length;
-    const processingMethod = hybridPages > pages.length / 2 ? 'hybrid' : 'text-only';
+    const doclingPages = pages.filter(p => p.metadata.processingMethod === 'docling').length;
+    const processingMethod = doclingPages > pages.length / 2 ? 'docling' : 'text-only';
 
     return {
       metadata: {

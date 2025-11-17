@@ -88,6 +88,27 @@ export const createAPIRouter = (handlers: AppHandlers) => {
       );
     }
 
+    // LLM endpoints
+    if (method === 'POST' && path === '/api/llm/analyze') {
+      return handlers.llmHandlers.handleAnalyze(req);
+    }
+
+    if (method === 'POST' && path === '/api/llm/process') {
+      return handlers.llmHandlers.handleProcess(req);
+    }
+
+    if (method === 'POST' && path === '/api/llm/query') {
+      return handlers.llmHandlers.handleQuery(req);
+    }
+
+    if (method === 'POST' && path === '/api/llm/knowledge-graph') {
+      return handlers.llmHandlers.handleKnowledgeGraph(req);
+    }
+
+    if (method === 'GET' && path === '/api/llm/status') {
+      return handlers.llmHandlers.handleStatus(req);
+    }
+
     return null;
   };
 };

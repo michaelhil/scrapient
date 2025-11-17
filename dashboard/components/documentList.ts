@@ -5,11 +5,13 @@ import { formatDate, getDocumentIcon } from '../core/utils';
 export const initializeDocumentList = (): void => {
   const selectAllBtn = document.getElementById('select-all-btn');
   const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+  const analyzeSelectedBtn = document.getElementById('analyze-selected-btn');
   const refreshBtn = document.getElementById('refresh-btn');
   const documentsList = document.getElementById('documents-list');
 
   selectAllBtn?.addEventListener('click', toggleSelectAll);
   deleteSelectedBtn?.addEventListener('click', deleteSelectedDocuments);
+  analyzeSelectedBtn?.addEventListener('click', analyzeSelectedDocuments);
   refreshBtn?.addEventListener('click', loadDocuments);
   documentsList?.addEventListener('click', handleDocumentClick);
   documentsList?.addEventListener('change', handleCheckboxChange);
@@ -86,10 +88,14 @@ const handleDocumentClick = async (event: Event): Promise<void> => {
   if (!docId) return;
 
   try {
+    console.log('Looking for document with ID:', docId);
     const doc = state.documents.find(d => (d.id || d._id) === docId);
     if (!doc) {
+      console.error('Document not found in state. Available documents:', state.documents.map(d => ({ id: d.id || d._id, title: d.title })));
       throw new Error('Document not found');
     }
+
+    console.log('Found document:', doc.title, 'with ID:', doc.id || doc._id);
 
     // Import and use document modal
     const { showDocumentModal } = await import('./documentModal');
@@ -174,9 +180,24 @@ const deleteSelectedDocuments = async (): Promise<void> => {
   }
 };
 
+const analyzeSelectedDocuments = async (): Promise<void> => {
+  if (state.selectedIds.size === 0) return;
+
+  try {
+    // Import and show analysis modal
+    const { showAnalysisModal } = await import('./analysisModal');
+    const selectedIds = Array.from(state.selectedIds);
+    showAnalysisModal(selectedIds);
+  } catch (error) {
+    console.error('Failed to open analysis modal:', error);
+    alert('Failed to open analysis modal. Please try again.');
+  }
+};
+
 const updateBulkActions = (): void => {
   const selectAllBtn = document.getElementById('select-all-btn');
   const deleteSelectedBtn = document.getElementById('delete-selected-btn') as HTMLButtonElement;
+  const analyzeSelectedBtn = document.getElementById('analyze-selected-btn') as HTMLButtonElement;
 
   if (selectAllBtn) {
     const allSelected = state.selectedIds.size === state.documents.length && state.documents.length > 0;
@@ -185,6 +206,10 @@ const updateBulkActions = (): void => {
 
   if (deleteSelectedBtn) {
     deleteSelectedBtn.disabled = state.selectedIds.size === 0;
+  }
+
+  if (analyzeSelectedBtn) {
+    analyzeSelectedBtn.disabled = state.selectedIds.size === 0;
   }
 };
 

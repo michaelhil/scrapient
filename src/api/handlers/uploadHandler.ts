@@ -1,6 +1,6 @@
 import type { Storage } from '../../storage/types';
 import { validateFile } from '../validators/fileValidator';
-import { processPDFFile, processJSONFile, processMarkdownFile, processPastedJSON, processPastedMarkdown } from './fileProcessors';
+import { processPDFFile, processJSONFile, processMarkdownFile, processPastedJSON, processPastedMarkdown, processPastedText } from './fileProcessors';
 import { z } from 'zod';
 
 const UploadResponseSchema = z.object({
@@ -21,6 +21,11 @@ export const createUploadHandler = (storage: Storage) => {
     try {
       const formData = await req.formData();
       const files = formData.getAll('files') as File[];
+
+      console.log(`Upload request received: ${files.length} files`);
+      files.forEach((file, index) => {
+        console.log(`File ${index + 1}: ${file.name} (${file.type}, ${file.size} bytes)`);
+      });
 
       if (files.length === 0) {
         return new Response(
@@ -47,9 +52,11 @@ export const createUploadHandler = (storage: Storage) => {
 
           // Process file based on type
           let document: any;
+          console.log(`Processing ${file.name} as ${validation.contentType}`);
           switch (validation.contentType) {
             case 'pdf':
               document = await processPDFFile(buffer, file.name);
+              console.log(`PDF processing completed for ${file.name}`);
               break;
             case 'json':
               document = await processJSONFile(buffer, file.name, file.type);
@@ -147,6 +154,8 @@ export const createUploadHandler = (storage: Storage) => {
         document = await processPastedJSON(content, title);
       } else if (contentType === 'md') {
         document = await processPastedMarkdown(content, title);
+      } else if (contentType === 'text') {
+        document = await processPastedText(content, title);
       } else {
         throw new Error(`Unsupported content type: ${contentType}`);
       }

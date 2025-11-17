@@ -24,12 +24,17 @@ export const initializeDocumentModal = (): void => {
 };
 
 export const showDocumentModal = async (doc: ScrapedDocument): Promise<void> => {
+  console.log('Opening document modal for:', doc.title, 'ID:', doc.id || doc._id);
+
   const modal = document.getElementById('document-modal');
   const titleElement = document.getElementById('modal-title');
   const previewIframe = document.getElementById('preview-iframe') as HTMLIFrameElement;
   const dataContent = document.getElementById('data-content');
 
-  if (!modal || !titleElement || !previewIframe || !dataContent) return;
+  if (!modal || !titleElement || !previewIframe || !dataContent) {
+    console.error('Modal elements not found');
+    return;
+  }
 
   // Show modal
   modal.style.display = 'flex';
@@ -56,9 +61,12 @@ export const showDocumentModal = async (doc: ScrapedDocument): Promise<void> => 
 };
 
 const setupPreviewContent = (doc: ScrapedDocument, iframe: HTMLIFrameElement): void => {
+  console.log('Setting up preview content for document:', doc.title, 'type:', doc.contentType, 'content keys:', Object.keys(doc.content || {}));
+
   if (doc.contentType === 'pdf') {
     // Handle PDF documents
-    const content = doc.content.markdown || doc.content.text || 'No content available';
+    const content = doc.content?.markdown || doc.content?.text || 'No content available';
+    console.log('PDF content length:', content.length);
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -83,7 +91,7 @@ const setupPreviewContent = (doc: ScrapedDocument, iframe: HTMLIFrameElement): v
       <body>
         <div class="content">
           ${content === 'No content available' ? '<div class="no-content">No content available</div>' :
-            doc.content.markdown ? markdownToHtml(content) : `<pre>${escapeHtml(content)}</pre>`}
+            doc.content?.markdown ? markdownToHtml(content) : `<pre>${escapeHtml(content)}</pre>`}
         </div>
       </body>
       </html>
@@ -91,12 +99,12 @@ const setupPreviewContent = (doc: ScrapedDocument, iframe: HTMLIFrameElement): v
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const blobUrl = URL.createObjectURL(blob);
     iframe.src = blobUrl;
-  } else if (doc.content.html) {
+  } else if (doc.content?.html) {
     // Handle HTML content
     const blob = new Blob([doc.content.html], { type: 'text/html' });
     const blobUrl = URL.createObjectURL(blob);
     iframe.src = blobUrl;
-  } else if (doc.content.markdown) {
+  } else if (doc.content?.markdown) {
     // Handle Markdown content
     const htmlContent = `
       <!DOCTYPE html>
@@ -151,7 +159,7 @@ const setupPreviewContent = (doc: ScrapedDocument, iframe: HTMLIFrameElement): v
         </style>
       </head>
       <body>
-        <pre>${escapeHtml(doc.content.text || 'No content available')}</pre>
+        <pre>${escapeHtml(doc.content?.text || 'No content available')}</pre>
       </body>
       </html>
     `;
@@ -162,7 +170,9 @@ const setupPreviewContent = (doc: ScrapedDocument, iframe: HTMLIFrameElement): v
 };
 
 const setupDataContent = (doc: ScrapedDocument, dataElement: HTMLElement): void => {
-  if (doc.content.json) {
+  console.log('Setting up data content for document:', doc.title);
+
+  if (doc.content?.json) {
     // Handle JSON content with expandable fields
     dataElement.innerHTML = '';
     const jsonContainer = document.createElement('div');
@@ -187,7 +197,7 @@ const setupDataContent = (doc: ScrapedDocument, dataElement: HTMLElement): void 
       contentType: doc.contentType,
       content: {
         ...doc.content,
-        fileData: doc.content.fileData ? '[Binary Data]' : undefined
+        fileData: doc.content?.fileData ? '[Binary Data]' : undefined
       }
     };
 

@@ -142,3 +142,26 @@ export const processPastedMarkdown = async (content: string, title?: string) => 
     }
   };
 };
+
+export const processPastedText = async (content: string, title?: string) => {
+  const documentTitle = title?.trim() || generateTitle(content, 'Untitled');
+  const buffer = Buffer.from(content, 'utf-8');
+
+  return {
+    url: `paste://text/${Date.now()}`,
+    domain: 'local',
+    title: documentTitle,
+    scrapedAt: new Date(),
+    contentType: 'text' as const,
+    content: {
+      text: content,
+      fileData: buffer,
+      metadata: {
+        processingMethod: 'paste',
+        uploadedAt: new Date().toISOString(),
+        mimeType: 'text/plain',
+        fileSize: buffer.length,
+      }
+    }
+  };
+};
