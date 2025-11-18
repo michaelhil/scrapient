@@ -4,6 +4,7 @@ import { createScrapeHandlers } from './api/scrape';
 import { createDocumentHandlers } from './api/documents';
 import { createUploadHandlers } from './api/upload';
 import { createLLMHandlers } from './api/llm';
+import { createKGHandlers } from './api/kg';
 import { createAppRouter } from './core/router';
 
 export const createServer = async (): Promise<Server> => {
@@ -14,12 +15,14 @@ export const createServer = async (): Promise<Server> => {
   const documentHandlers = createDocumentHandlers(storage);
   const uploadHandlers = createUploadHandlers(storage);
   const llmHandlers = createLLMHandlers(storage);
+  const kgHandlers = createKGHandlers(storage);
 
   const router = createAppRouter({
     scrapeHandlers,
     documentHandlers,
     uploadHandlers,
     llmHandlers,
+    kgHandlers,
     storage
   });
 
@@ -27,7 +30,8 @@ export const createServer = async (): Promise<Server> => {
 
   const server = Bun.serve({
     port,
-    fetch: router
+    fetch: router,
+    idleTimeout: 255 // Maximum allowed idleTimeout in seconds
   });
 
   console.log(`🕷️ Scrapient server running on http://localhost:${port}`);

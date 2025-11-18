@@ -61,6 +61,7 @@
                 <button id="select-all-btn" class="secondary-button">☑️ Select All</button>
                 <button id="delete-selected-btn" class="delete-button" disabled>🗑️ Delete Selected</button>
                 <button id="analyze-selected-btn" class="primary-button" disabled>🧠 Analyze</button>
+                <button id="generate-kg-btn" class="primary-button" disabled>🕸️ Generate KG</button>
                 <button id="refresh-btn" class="secondary-button">🔄 Refresh</button>
                 <button id="paste-content-btn" class="secondary-button">📝 Paste Content</button>
             </div>
@@ -199,6 +200,94 @@ Examples:
                         <button id="analysis-submit-btn" class="primary-button">🧠 Start Analysis</button>
                         <button id="analysis-cancel-btn" class="secondary-button">Cancel</button>
                         <button id="analysis-close-btn" class="secondary-button hidden">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Knowledge Graph Generation Modal -->
+    <div id="kg-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto; width: 90%; max-width: 800px;">
+            <div class="modal-content-inner">
+                <div class="modal-header">
+                    <h3>🕸️ Generate Knowledge Graph</h3>
+                    <button id="kg-modal-close" class="close-button">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="kg-title">Knowledge Graph Title:</label>
+                        <input type="text" id="kg-title" placeholder="Enter a title for your knowledge graph..." />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kg-prompt">Generation Prompt:</label>
+                        <textarea id="kg-prompt" rows="6" placeholder="Describe what you want to extract...">Extract entities, relationships, and key concepts from the provided documents. Focus on identifying:
+
+- People, organizations, locations, and important concepts
+- Relationships between these entities (e.g., "works for", "located in", "caused by")
+- Temporal relationships and events
+- Hierarchical structures and dependencies
+
+Create a comprehensive knowledge graph that captures the main themes and connections in the documents.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selected Documents:</label>
+                        <div id="kg-selected-documents" class="selected-documents-list"></div>
+                    </div>
+
+                    <div id="kg-progress" class="progress-section hidden">
+                        <div class="progress-header">
+                            <h4>🕸️ Generating Knowledge Graph</h4>
+                            <div class="stage-indicator">
+                                <span id="kg-stage">Stage 1 of 2</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="kg-progress-fill"></div>
+                        </div>
+                        <div class="progress-status" id="kg-progress-status">Analyzing documents...</div>
+                    </div>
+
+                    <div id="kg-preview" class="kg-preview hidden">
+                        <h4>📊 Knowledge Graph Preview</h4>
+                        <div class="preview-tabs">
+                            <button class="tab-btn active" data-tab="mermaid">🔗 Diagram</button>
+                            <button class="tab-btn" data-tab="json">📋 Raw Data</button>
+                        </div>
+
+                        <div class="preview-content">
+                            <div id="kg-mermaid-container" class="tab-content active">
+                                <div id="kg-mermaid-diagram"></div>
+                            </div>
+                            <div id="kg-json-container" class="tab-content">
+                                <pre id="kg-json-display"></pre>
+                            </div>
+                        </div>
+
+                        <div class="preview-actions">
+                            <button id="kg-discard-btn" class="secondary-button">🗑️ Discard</button>
+                            <button id="kg-approve-btn" class="primary-button">✅ Generate Cypher</button>
+                        </div>
+                    </div>
+
+                    <div id="kg-cypher" class="kg-cypher hidden">
+                        <h4>⚡ Neo4j Cypher Code</h4>
+                        <div class="cypher-container">
+                            <pre id="kg-cypher-code"></pre>
+                        </div>
+                        <div class="cypher-actions">
+                            <button id="kg-copy-cypher-btn" class="secondary-button">📋 Copy Code</button>
+                            <button id="kg-save-btn" class="primary-button">💾 Save to Database</button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="kg-modal-generate-btn" class="primary-button">🕸️ Generate Knowledge Graph</button>
+                        <button id="kg-cancel-btn" class="secondary-button">Cancel</button>
+                        <button id="kg-close-btn" class="secondary-button hidden">Close</button>
                     </div>
                 </div>
             </div>

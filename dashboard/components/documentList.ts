@@ -194,10 +194,19 @@ const analyzeSelectedDocuments = async (): Promise<void> => {
   }
 };
 
+export const getSelectedDocuments = (): any[] => {
+  const selectedIds = Array.from(state.selectedIds);
+  return state.documents.filter(doc => {
+    const docId = doc.id || doc._id || '';
+    return selectedIds.includes(docId);
+  });
+};
+
 const updateBulkActions = (): void => {
   const selectAllBtn = document.getElementById('select-all-btn');
   const deleteSelectedBtn = document.getElementById('delete-selected-btn') as HTMLButtonElement;
   const analyzeSelectedBtn = document.getElementById('analyze-selected-btn') as HTMLButtonElement;
+  const kgBtn = document.getElementById('generate-kg-btn') as HTMLButtonElement;
 
   if (selectAllBtn) {
     const allSelected = state.selectedIds.size === state.documents.length && state.documents.length > 0;
@@ -211,6 +220,15 @@ const updateBulkActions = (): void => {
   if (analyzeSelectedBtn) {
     analyzeSelectedBtn.disabled = state.selectedIds.size === 0;
   }
+
+  if (kgBtn) {
+    kgBtn.disabled = state.selectedIds.size === 0;
+  }
+
+  // Dispatch selection change event for other components
+  document.dispatchEvent(new CustomEvent('selectionChanged', {
+    detail: { selectedCount: state.selectedIds.size }
+  }));
 };
 
 const updateDocumentCount = (): void => {

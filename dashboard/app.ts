@@ -3,6 +3,7 @@ import { initializeDocumentList, loadDocuments } from './components/documentList
 import { initializeDocumentModal, closeDocumentModal } from './components/documentModal';
 import { initializePasteModal } from './components/pasteModal';
 import { initializeAnalysisModal, hideAnalysisModal } from './components/analysisModal';
+import { initializeKGModal, hideKGModal } from './components/kgModal';
 
 const initializeEventListeners = (): void => {
   // Initialize all component event listeners
@@ -11,15 +12,19 @@ const initializeEventListeners = (): void => {
   initializeDocumentModal();
   initializePasteModal();
   initializeAnalysisModal();
+  initializeKGModal();
 
   // Global keyboard shortcuts
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      // Close analysis modal first, then paste modal, then document modal
+      // Close modals in priority order: KG, analysis, paste, document
+      const kgModalElement = document.getElementById('kg-modal');
       const analysisModalElement = document.getElementById('analysis-modal');
       const pasteModalElement = document.getElementById('paste-modal');
 
-      if (analysisModalElement && analysisModalElement.style.display !== 'none') {
+      if (kgModalElement && kgModalElement.style.display !== 'none') {
+        hideKGModal();
+      } else if (analysisModalElement && analysisModalElement.style.display !== 'none') {
         hideAnalysisModal();
       } else if (pasteModalElement && pasteModalElement.style.display !== 'none') {
         const { closePasteModal } = require('./components/pasteModal');

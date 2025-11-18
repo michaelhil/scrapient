@@ -109,6 +109,31 @@ export const createAPIRouter = (handlers: AppHandlers) => {
       return handlers.llmHandlers.handleStatus(req);
     }
 
+    // KG endpoints
+    if (method === 'POST' && path === '/api/kg/generate') {
+      return handlers.kgHandlers.handleGenerate(req);
+    }
+
+    if (method === 'POST' && path === '/api/kg/to-cypher') {
+      return handlers.kgHandlers.handleToCypher(req);
+    }
+
+    if (method === 'POST' && path === '/api/kg/save') {
+      return handlers.kgHandlers.handleSave(req);
+    }
+
+    if (method === 'GET' && path === '/api/kg') {
+      return handlers.kgHandlers.handleList(req);
+    }
+
+    if (method === 'GET' && path.startsWith('/api/kg/') && path.split('/').length === 4) {
+      return handlers.kgHandlers.handleGet(req);
+    }
+
+    if (method === 'DELETE' && path.startsWith('/api/kg/') && path.split('/').length === 4) {
+      return handlers.kgHandlers.handleDelete(req);
+    }
+
     return null;
   };
 };

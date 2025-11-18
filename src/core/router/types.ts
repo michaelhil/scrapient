@@ -23,6 +23,14 @@ export interface AppHandlers {
     handleKnowledgeGraph: (req: Request) => Promise<Response>;
     handleStatus: (req: Request) => Promise<Response>;
   };
+  kgHandlers: {
+    handleGenerate: (req: Request) => Promise<Response>;
+    handleToCypher: (req: Request) => Promise<Response>;
+    handleSave: (req: Request) => Promise<Response>;
+    handleList: (req: Request) => Promise<Response>;
+    handleGet: (req: Request) => Promise<Response>;
+    handleDelete: (req: Request) => Promise<Response>;
+  };
   storage: Storage;
 }
 

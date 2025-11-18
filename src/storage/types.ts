@@ -20,6 +20,26 @@ export interface ScrapedDocument {
   error?: string;
 }
 
+export interface KnowledgeGraphStorage {
+  id: string;
+  title: string;
+  sourceDocumentIds: string[];
+  generatedAt: Date;
+  updatedAt: Date;
+  rawData?: any;
+  mermaidCode?: string;
+  cypherCode?: string;
+  neo4jStatus: 'pending' | 'saving' | 'saved' | 'error';
+  neo4jError?: string;
+  metadata: {
+    userPrompt: string;
+    model: string;
+    processingTime: number;
+    stage: 'generating' | 'preview' | 'cypher' | 'complete' | 'error';
+    error?: string;
+  };
+}
+
 export interface Storage {
   save: (document: Omit<ScrapedDocument, 'id'>) => Promise<string>;
   findById: (id: string) => Promise<ScrapedDocument | null>;
@@ -27,4 +47,11 @@ export interface Storage {
   deleteById: (id: string) => Promise<boolean>;
   deleteMany: (ids: string[]) => Promise<number>;
   close: () => Promise<void>;
+
+  // Knowledge Graph operations
+  saveKG: (kg: Omit<KnowledgeGraphStorage, 'id'>) => Promise<string>;
+  findKGById: (id: string) => Promise<KnowledgeGraphStorage | null>;
+  findAllKGs: (options?: { limit?: number; offset?: number }) => Promise<KnowledgeGraphStorage[]>;
+  updateKG: (id: string, updates: Partial<KnowledgeGraphStorage>) => Promise<boolean>;
+  deleteKGById: (id: string) => Promise<boolean>;
 }
