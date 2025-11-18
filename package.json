@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "bun --hot src/server.ts",
     "start": "bun src/server.ts",
+    "stop": "pkill -f 'bun.*src/server.ts' || rm -f .scrapient.lock",
+    "restart": "npm run stop && sleep 2 && npm run dev",
     "build": "bun build src/server.ts --outdir dist",
     "build:extensions": "bun extensions/scripts/build-chrome.ts && bun extensions/scripts/build-firefox.ts",
     "watch:extensions": "bun extensions/scripts/watch.ts",

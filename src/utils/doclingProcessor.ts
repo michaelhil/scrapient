@@ -2,6 +2,7 @@ import { spawn } from 'child_process';
 import { writeFile, unlink, readFile } from 'fs/promises';
 import path from 'path';
 import { z } from 'zod';
+import { randomUUID } from 'crypto';
 
 export interface DoclingConfig {
   outputFormat: 'md' | 'json' | 'text';
@@ -53,7 +54,12 @@ export const createDoclingProcessor = (config: Partial<DoclingConfig> = {}) => {
 
   const processPDFBuffer = async (buffer: Buffer, originalName?: string): Promise<DoclingResult> => {
     const startTime = Date.now();
-    const tempFilePath = path.join(validatedConfig.tempDir, `docling_${Date.now()}.pdf`);
+
+    // Sanitize original name to prevent path traversal
+    const safeName = originalName ? sanitizeFilename(originalName) : 'document';
+
+    // Use UUID for unique temp file names to prevent conflicts
+    const tempFilePath = path.join(validatedConfig.tempDir, `docling_${randomUUID()}.pdf`);
     const tempFiles: string[] = [tempFilePath];
 
     try {
@@ -161,9 +167,10 @@ export const createDoclingProcessor = (config: Partial<DoclingConfig> = {}) => {
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // Extract original filename from URL
+      // Extract and sanitize original filename from URL
       const parsedUrl = new URL(url);
-      const originalName = parsedUrl.pathname.split('/').pop()?.replace(/\.pdf$/i, '') || 'document';
+      const rawName = parsedUrl.pathname.split('/').pop()?.replace(/\.pdf$/i, '') || 'document';
+      const originalName = sanitizeFilename(rawName);
 
       // Process with different formats
       const markdownProcessor = createDoclingProcessor({ ...validatedConfig, outputFormat: 'md' });
@@ -239,4 +246,23 @@ export const createDoclingProcessor = (config: Partial<DoclingConfig> = {}) => {
     processPDFBuffer,
     processPDFFromURL,
   };
+};
+
+// Security helper to sanitize filenames
+const sanitizeFilename = (filename: string): string => {
+  if (!filename || typeof filename !== 'string') {
+    return 'document';
+  }
+
+  return filename
+    // Remove path separators and dangerous characters
+    .replace(/[\/\\:*?"<>|]/g, '_')
+    // Remove null bytes
+    .replace(/\0/g, '')
+    // Remove leading/trailing dots and spaces
+    .replace(/^[\.\s]+|[\.\s]+$/g, '')
+    // Limit length
+    .substring(0, 100)
+    // Fallback if empty after sanitization
+    || 'document';
 };

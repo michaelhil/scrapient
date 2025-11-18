@@ -220,6 +220,71 @@ Minimizing external dependencies reduces security vulnerabilities and maintenanc
 
 ---
 
+## ADR-009: Enterprise Security Implementation
+
+**Date**: 2024-11-18
+**Status**: Adopted
+**Decision Maker**: Core Development Team
+
+### Context
+Production deployment requires comprehensive security measures including process management, CORS protection, and input validation.
+
+### Decision
+- **Process lock file system** to prevent multiple server instances
+- **Comprehensive security middleware** with CSP, CORS, rate limiting
+- **Configuration validation** with Zod-based environment checking
+- **Input sanitization** for all user inputs
+- **Port conflict resolution** with automatic cleanup
+
+### Implementation
+- `src/core/process-guard.ts` - Single-instance enforcement
+- `src/core/port-manager.ts` - Port conflict detection and resolution
+- `src/core/security.ts` - Security middleware and CORS
+- `src/core/config.ts` - Configuration validation
+
+### Security Features
+- **Rate Limiting**: 100 requests per 15-minute window
+- **Security Headers**: CSP, XSS protection, HSTS (production)
+- **CORS Protection**: Configurable origin validation
+- **Input Sanitization**: Path traversal and injection prevention
+- **Process Guards**: Automatic server conflict resolution
+
+### Benefits
+- **Zero security vulnerabilities** in static analysis
+- **Enterprise-grade process management**
+- **Development-friendly** with clear error messages
+- **Production-ready** security posture
+
+---
+
+## ADR-010: Knowledge Graph Generation
+
+**Date**: 2024-11-18
+**Status**: Adopted
+**Decision Maker**: Core Development Team
+
+### Context
+Users need to visualize relationships between entities in documents for better understanding and analysis.
+
+### Decision
+- **Streaming knowledge graph generation** with real-time progress
+- **Mermaid diagram visualization** for interactive display
+- **Neo4j Cypher export** for database integration
+- **Local LLM processing** maintaining privacy
+
+### Implementation
+- `src/api/kg.ts` - Knowledge graph API with streaming
+- `src/services/kg/` - KG processing service
+- `dashboard/components/kgModal.ts` - Interactive UI
+
+### Features
+- **Real-time progress** via Server-Sent Events
+- **Visual diagrams** with Mermaid rendering
+- **Database export** with Cypher code generation
+- **Entity extraction** with relationship mapping
+
+---
+
 ## Implementation Guidelines
 
 ### Code Organization
